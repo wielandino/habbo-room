@@ -6,29 +6,53 @@ screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 
 
-def create_room(tilemap = None):
-    tile_size = 64
+def grid_to_iso(grid_x, grid_y, tile_width=64, tile_height=32):
+    iso_x = (grid_x - grid_y) * (tile_width // 2)
+    iso_y = (grid_x + grid_y) * (tile_height // 2)
+    return iso_x, iso_y
 
-    if (tilemap is None):
+def draw_iso_tile(surface, x, y, tile_width, tile_height, color):
+    points = [
+        (x, y),                              # Oben
+        (x + tile_width // 2, y + tile_height // 2),  # Rechts
+        (x, y + tile_height),                # Unten
+        (x - tile_width // 2, y + tile_height // 2)   # Links
+    ]
+    pygame.draw.polygon(surface, color, points)
+    # Draw border  
+    pygame.draw.polygon(surface, (100, 100, 100), points, 2)
+
+def create_room(tilemap = None):
+    tile_width = 64
+    tile_height = 32
+
+    if tilemap is None:
         # x = wall
         # o = floor
-        example_tilemap = ("xxxx\n"
-                        "xooo\n"
-                        "xooo\n"
-                        "xooo")
-    
-    converted_tilemap = convert_tilemap(example_tilemap)
+        tilemap = ("xxxx\n"
+                   "xooo\n"
+                   "xooo\n"
+                   "xooo")
+        
+    converted_tilemap = convert_tilemap(tilemap)
+
+    offset_x = 400
+    offset_y = 100
+
     for y, row in enumerate(converted_tilemap):
         for x, tile in enumerate(row):
             if tile == 1:
-                color = (0, 0, 0)  # Wall
+                color = (80, 80, 80)  # Wall
             elif tile == 0:
-                color = (200, 200, 200)  # Floor
+                color = (200, 200, 180)  # Floor
             else:
                 continue
             
-            rect = pygame.Rect(x * tile_size, y * tile_size, tile_size, tile_size)
-            pygame.draw.rect(screen, color, rect)
+            iso_x, iso_y = grid_to_iso(x, y, tile_width, tile_height)
+            
+            draw_iso_tile(screen, iso_x + offset_x, iso_y + offset_y, 
+                         tile_width, tile_height, color)
+            
 
 def convert_tilemap(tilemap):
     def to_tile_type(ch):
@@ -58,8 +82,6 @@ while running:
     
     # Render
     screen.fill((255, 255, 255))
-    
     create_room(None)
-
     pygame.display.flip()
     clock.tick(60)
