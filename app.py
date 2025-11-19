@@ -8,16 +8,18 @@ clock = pygame.time.Clock()
 
 def grid_to_iso(grid_x, grid_y, tile_width=64, tile_height=32):
     iso_x = (grid_x - grid_y) * (tile_width // 2)
-    iso_y = (grid_x + grid_y) * (tile_height // 2)
+    iso_y = (grid_y + grid_x) * (tile_height // 2)
+
     return iso_x, iso_y
 
 def draw_iso_tile(surface, x, y, tile_width, tile_height, color):
     points = [
-        (x, y),                              # Oben
-        (x + tile_width // 2, y + tile_height // 2),  # Rechts
-        (x, y + tile_height),                # Unten
-        (x - tile_width // 2, y + tile_height // 2)   # Links
+        (x, y),                              
+        (x + tile_width // 2, y + tile_height // 2),
+        (x, y + tile_height),
+        (x - tile_width // 2, y + tile_height // 2)
     ]
+
     pygame.draw.polygon(surface, color, points)
     # Draw border  
     pygame.draw.polygon(surface, (100, 100, 100), points, 2)
