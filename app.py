@@ -21,8 +21,6 @@ def draw_iso_tile(surface, x, y, tile_width, tile_height, color):
     ]
 
     pygame.draw.polygon(surface, color, points)
-    # Draw border  
-    pygame.draw.polygon(surface, (87, 87, 87), points, 2)
 
 def draw_iso_wall_left(surface, x, y, tile_width, tile_height, color):
     wall_height = tile_height * 2
@@ -35,7 +33,6 @@ def draw_iso_wall_left(surface, x, y, tile_width, tile_height, color):
     ]
     
     pygame.draw.polygon(surface, color, points)
-    pygame.draw.polygon(surface, (203, 203, 203), points, 2)
 
 def draw_iso_wall_top(surface, x, y, tile_width, tile_height, color):
     wall_height = tile_height * 2
@@ -49,6 +46,30 @@ def draw_iso_wall_top(surface, x, y, tile_width, tile_height, color):
     
     pygame.draw.polygon(surface, color, points)
     pygame.draw.polygon(surface, color, points, 2)
+
+def draw_iso_tile_left_outline(surface, x, y, tile_width, tile_height, color):
+    points = [
+        (x, y),                              
+        (x + tile_width // 2, y + tile_height // 2),
+        (x, y + tile_height),
+        (x - tile_width // 2, y + tile_height // 2)
+    ]
+    
+    bottom = points[2]
+    left = points[3]
+    pygame.draw.line(surface, color, bottom, left, 10)
+
+def draw_iso_tile_right_outline(surface, x, y, tile_width, tile_height, color):
+    points = [
+        (x, y),                              
+        (x + tile_width // 2, y + tile_height // 2),
+        (x, y + tile_height),
+        (x - tile_width // 2, y + tile_height // 2)
+    ]
+    
+    bottom = points[2]
+    right = points[1]
+    pygame.draw.line(surface, color, bottom, right, 10)
 
 def create_room(tilemap = None):
     tile_width = 128
@@ -73,25 +94,41 @@ def create_room(tilemap = None):
             iso_x, iso_y = grid_to_iso(x, y, tile_width, tile_height)
             
             if tile == 1:
-                colorLeft = (203, 203, 203)
-                colorTop = (255, 255, 255)
+                colorWallLeft = (203, 203, 203)
+                colorWallTop = (255, 255, 255)
                 
                 if x + 1 < len(row) and row[x + 1] == 0:
                     draw_iso_wall_left(screen, 
                                      iso_x + offset_x + tile_width // 2,   
                                      iso_y + offset_y - tile_height - (tile_height // 2),
-                                     tile_width, tile_height, colorLeft)
+                                     tile_width, tile_height, colorWallLeft)
                 
                 if y + 1 < len(converted_tilemap) and converted_tilemap[y + 1][x] == 0:
                     draw_iso_wall_top(screen, 
                                       iso_x + offset_x - tile_width // 2,   
                                       iso_y + offset_y - tile_height - (tile_height // 2),
-                                      tile_width, tile_height, colorTop)
+                                      tile_width, tile_height, colorWallTop)
                     
             elif tile == 0:
                 color = (152, 152, 101)
                 draw_iso_tile(screen, iso_x + offset_x, iso_y + offset_y, 
                               tile_width, tile_height, color)
+                
+                if y + 1 == len(converted_tilemap):
+                    draw_iso_tile_left_outline(screen, 
+                                          iso_x + offset_x, 
+                                          iso_y + offset_y, 
+                                          tile_width, tile_height, 
+                                          (132, 132, 81))
+                    
+                if x + 1 == len(row):
+                    draw_iso_tile_right_outline(screen, 
+                                           iso_x + offset_x, 
+                                           iso_y + offset_y, 
+                                           tile_width, tile_height, 
+                                           (112, 112, 61))
+            
+
 
             
 def convert_tilemap(tilemap):
