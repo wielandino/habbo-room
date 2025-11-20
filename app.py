@@ -24,9 +24,25 @@ def draw_iso_tile(surface, x, y, tile_width, tile_height, color):
     # Draw border  
     pygame.draw.polygon(surface, (100, 100, 100), points, 2)
 
+def draw_iso_wall(surface, x, y, tile_width, tile_height, color):
+    
+    wall_width = tile_width // 2
+    wall_height = tile_height * 2
+
+    points = [
+        (x, y),                                                    # 1. Top right
+        (x - tile_width // 2, y + tile_height // 2),               # 2. Top left 
+        (x - tile_width // 2, y + tile_height // 2 + wall_height), # 3. Bottom left
+        (x, y + wall_height)                                       # 4. Bottom right
+    ]
+
+    pygame.draw.polygon(surface, color, points)
+    # Draw border  
+    pygame.draw.polygon(surface, (100, 100, 100), points, 2)
+
 def create_room(tilemap = None):
-    tile_width = 64
-    tile_height = 32
+    tile_width = 128
+    tile_height = 64
 
     if tilemap is None:
         # x = wall
@@ -43,19 +59,23 @@ def create_room(tilemap = None):
 
     for y, row in enumerate(converted_tilemap):
         for x, tile in enumerate(row):
+            iso_x, iso_y = grid_to_iso(x, y, tile_width, tile_height)
+
             if tile == 1:
                 color = (80, 80, 80)  # Wall
+                draw_iso_wall(screen, 
+                            iso_x + offset_x + tile_width // 2, 
+                            iso_y + offset_y - tile_height - (tile_height // 2),
+                            tile_width, tile_height, color)
+                
             elif tile == 0:
                 color = (200, 200, 180)  # Floor
+
+                draw_iso_tile(screen, iso_x + offset_x, iso_y + offset_y, 
+                         tile_width, tile_height, color)
             else:
                 continue
             
-            iso_x, iso_y = grid_to_iso(x, y, tile_width, tile_height)
-            
-            draw_iso_tile(screen, iso_x + offset_x, iso_y + offset_y, 
-                         tile_width, tile_height, color)
-            
-
 def convert_tilemap(tilemap):
     def to_tile_type(ch):
         # 'x' = 1 (wall), 'o' = 0 (floor)
