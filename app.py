@@ -24,20 +24,30 @@ def draw_iso_tile(surface, x, y, tile_width, tile_height, color):
     # Draw border  
     pygame.draw.polygon(surface, (100, 100, 100), points, 2)
 
-def draw_iso_wall(surface, x, y, tile_width, tile_height, color):
-    
-    wall_width = tile_width // 2
+def draw_iso_wall_left(surface, x, y, tile_width, tile_height, color):
     wall_height = tile_height * 2
-
+    
     points = [
-        (x, y),                                                    # 1. Top right
-        (x - tile_width // 2, y + tile_height // 2),               # 2. Top left 
-        (x - tile_width // 2, y + tile_height // 2 + wall_height), # 3. Bottom left
-        (x, y + wall_height)                                       # 4. Bottom right
+        (x, y),
+        (x - tile_width // 2, y + tile_height // 2),
+        (x - tile_width // 2, y + tile_height // 2 + wall_height),
+        (x, y + wall_height)
     ]
-
+    
     pygame.draw.polygon(surface, color, points)
-    # Draw border  
+    pygame.draw.polygon(surface, (100, 100, 100), points, 2)
+
+def draw_iso_wall_top(surface, x, y, tile_width, tile_height, color):
+    wall_height = tile_height * 2
+    
+    points = [
+        (x, y),                          
+        (x + tile_width // 2, y + tile_height // 2),            
+        (x + tile_width // 2, y + tile_height // 2 + wall_height),
+        (x, y + wall_height)
+    ]
+    
+    pygame.draw.polygon(surface, color, points)
     pygame.draw.polygon(surface, (100, 100, 100), points, 2)
 
 def create_room(tilemap = None):
@@ -47,10 +57,11 @@ def create_room(tilemap = None):
     if tilemap is None:
         # x = wall
         # o = floor
-        tilemap = ("xxxx\n"
-                   "xooo\n"
-                   "xooo\n"
-                   "xooo")
+        tilemap = ("xxxxx\n"
+                   "xoooo\n"
+                   "xoooo\n"
+                   "xoooo\n"
+                   "xoooo")
         
     converted_tilemap = convert_tilemap(tilemap)
 
@@ -60,21 +71,27 @@ def create_room(tilemap = None):
     for y, row in enumerate(converted_tilemap):
         for x, tile in enumerate(row):
             iso_x, iso_y = grid_to_iso(x, y, tile_width, tile_height)
-
+            
             if tile == 1:
-                color = (80, 80, 80)  # Wall
-                draw_iso_wall(screen, 
-                            iso_x + offset_x + tile_width // 2, 
-                            iso_y + offset_y - tile_height - (tile_height // 2),
-                            tile_width, tile_height, color)
+                color = (80, 80, 80)
                 
+                if x + 1 < len(row) and row[x + 1] == 0:
+                    draw_iso_wall_left(screen, 
+                                     iso_x + offset_x + tile_width // 2,   
+                                     iso_y + offset_y - tile_height - (tile_height // 2),
+                                     tile_width, tile_height, color)
+                
+                if y + 1 < len(converted_tilemap) and converted_tilemap[y + 1][x] == 0:
+                    draw_iso_wall_top(screen, 
+                                      iso_x + offset_x - tile_width // 2,   
+                                      iso_y + offset_y - tile_height - (tile_height // 2),
+                                      tile_width, tile_height, color)
+                    
             elif tile == 0:
-                color = (200, 200, 180)  # Floor
-
+                color = (200, 200, 180)
                 draw_iso_tile(screen, iso_x + offset_x, iso_y + offset_y, 
-                         tile_width, tile_height, color)
-            else:
-                continue
+                              tile_width, tile_height, color)
+
             
 def convert_tilemap(tilemap):
     def to_tile_type(ch):
