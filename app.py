@@ -21,6 +21,7 @@ def draw_iso_tile(surface, x, y, tile_width, tile_height, color):
     ]
 
     pygame.draw.polygon(surface, color, points)
+    pygame.draw.polygon(surface, (145, 144, 92), points, 1)
 
 def draw_iso_wall_left(surface, x, y, tile_width, tile_height, color):
     wall_height = tile_height * 2
