@@ -1,6 +1,8 @@
+import os
 import pygame
-import core.room as room
-import core.floorfurniture as floorfurniture
+import src.objects.room.room as room
+import src.objects.furniture.floorfurniture as floorfurniture
+
 
 # Init
 pygame.init()
@@ -19,7 +21,7 @@ while running:
     # Render
     screen.fill((0, 0, 0))
     room.create_room(None, screen)
-    floorfurniture.add_floor_furniture(screen, (1, 3))
+    floorfurniture.add_floor_furniture(screen, (1, 3), "club_sofa")
 
     pygame.display.flip()
     clock.tick(60)

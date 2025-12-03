@@ -1,8 +1,11 @@
 # floorfurniture.py
 import pygame
-import core.room as room
+import src.objects.room.room as room
 
-def add_floor_furniture(surface: pygame.Surface, grid_position: tuple[int, int]):
+def add_floor_furniture(surface: pygame.Surface, grid_position: tuple[int, int], type: str):
+
+    room_size = 64
+    
 
     grid_x, grid_y = grid_position
     
