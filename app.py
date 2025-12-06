@@ -3,6 +3,7 @@ from src.data.furniture_registry import FurnitureRegistry
 import pygame
 from src.objects.room.room import Room
 
+import pygame_gui
 
 # Init
 pygame.init()
@@ -21,13 +22,7 @@ club_sofa = FloorFurniture(
     type="club_sofa"
 )
 
-# club_sofa2 = FloorFurniture(
-#     room_x=3,
-#     room_y=2,
-#     room_z=0,
-#     direction=2,
-#     type="club_sofa"
-# )
+manager = pygame_gui.UIManager((800, 600))
 
 running = True
 while running:

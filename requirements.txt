@@ -1,0 +1,7 @@
+beautifulsoup4==4.14.3
+lxml==6.0.2
+pygame-ce==2.5.6
+pygame_gui==0.6.14
+python-i18n==0.3.9
+soupsieve==2.8
+typing_extensions==4.15.0
