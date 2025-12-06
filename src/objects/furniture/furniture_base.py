@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from src.data.furniture_asset import FurnitureAsset
 from src.data.furniture_layer import FurnitureLayer

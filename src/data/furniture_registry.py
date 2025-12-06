@@ -33,3 +33,6 @@ class FurnitureRegistry:
     def preload_all(cls, furniture_types: list[str]):
         for furniture_type in furniture_types:
             cls.load_furniture(furniture_type)
+
+    def get_registry(self):
+        return self.__furniture_cache
