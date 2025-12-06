@@ -2,7 +2,6 @@
 
 A simple room generator in python where you can create a habbo room. 
 
-![Rotate Furni](https://raw.githubusercontent.com/wielandino/habbo-room/refs/heads/master/rotatefurni.gif)
 ![Habbo Room](https://raw.githubusercontent.com/wielandino/habbo-room/refs/heads/master/room.png)
 
 ## Planned features
