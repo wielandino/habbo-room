@@ -150,10 +150,7 @@ class FurnitureExtractor:
                 
                 if asset:
                     layer_assets[direction] = asset
-                    print(f"  ✓ Layer {layer_id} ({layer_letter}), Direction {direction}, Z={z_index}: {asset_name}")
-                else:
-                    print(f"  ○ Asset nicht gefunden: {asset_name}")
-            
+                    
             if layer_assets or True:
                 furniture_layer = FurnitureLayer(
                     layer_id=layer_id,

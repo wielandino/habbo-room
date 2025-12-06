@@ -19,9 +19,17 @@ club_sofa = FloorFurniture(
     room_x=2,
     room_y=3,
     room_z=0,
-    direction=4,
+    direction=6,
     type="club_sofa"
 )
+
+# club_sofa2 = FloorFurniture(
+#     room_x=3,
+#     room_y=2,
+#     room_z=0,
+#     direction=2,
+#     type="club_sofa"
+# )
 
 running = True
 while running:
@@ -37,6 +45,7 @@ while running:
 
     room.render()
     club_sofa.render(screen)
+    #club_sofa2.render(screen)
 
     pygame.display.flip()
     clock.tick(60)
