@@ -94,12 +94,16 @@ class Furniture:
         return tiles
     
     def change_direction(self):
-        next_direction = self.direction + 2
+        dirs = self.__furniture_data.possible_directions
 
-        if next_direction in self.__furniture_data.possible_directions:
-            self.direction = next_direction
-        else:
-            self.direction = self.__furniture_data.possible_directions[0]
+        try:
+            idx = dirs.index(self.direction)
+        except ValueError:
+            self.direction = dirs[0]
+            return
+
+        next_idx = (idx + 1) % len(dirs)
+        self.direction = dirs[next_idx]
 
     
     def get_rect(self) -> pygame.Rect:

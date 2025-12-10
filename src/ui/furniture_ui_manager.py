@@ -56,15 +56,22 @@ class FurnitureUIManager:
         )
         
         icon_path = f"{definitions.ROOT_DIR}/src/data/furnitures/{furniture.type}/images/icon.png"
-        icon_surface = pygame.image.load(icon_path).convert_alpha()
-        icon_w, icon_h = icon_surface.get_size()
+        icon_surface = None
         
-        pygame_gui.elements.UIImage(
-            relative_rect=pygame.Rect((40, 30), (icon_w, icon_h)),
-            image_surface=icon_surface,
-            container=self.panel,
-            manager=self.manager
-        )
+        try:
+            icon_surface = pygame.image.load(icon_path).convert_alpha()
+            icon_w, icon_h = icon_surface.get_size()
+
+            pygame_gui.elements.UIImage(
+                relative_rect=pygame.Rect((40, 30), (icon_w, icon_h)),
+                image_surface=icon_surface,
+                container=self.panel,
+                manager=self.manager)
+            
+        except FileNotFoundError:
+            print(f"Icon for '{self.current_furniture.type}' not found")
+                
+        
     
     def __create_rotate_button(self):
         button_y = self.panel_y + PANEL_HEIGHT + 5

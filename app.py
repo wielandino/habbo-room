@@ -64,6 +64,14 @@ class App:
                 room_z=0,
                 direction=2,
                 type="nft_md_limukaappi"
+            ),
+
+            Furniture(
+                room_x=3,
+                room_y=4,
+                room_z=0,
+                direction=4,
+                type="rare_dragonlamp"
             )
         ]
     
