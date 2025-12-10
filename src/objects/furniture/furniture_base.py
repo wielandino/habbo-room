@@ -10,3 +10,4 @@ class FurnitureBase:
     tile_height: int
     layers: list[FurnitureLayer]
     all_assets: dict[str, FurnitureAsset]
+    possible_directions: list[int] 

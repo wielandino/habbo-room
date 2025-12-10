@@ -79,6 +79,6 @@ class FurnitureUIManager:
     
     def handle_button_click(self, event) -> bool:
         if event.ui_element == self.rotate_button and self.current_furniture:
-            self.current_furniture.rotate_clockwise()
+            self.current_furniture.change_direction()
             return True
         return False

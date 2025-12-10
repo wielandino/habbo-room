@@ -96,11 +96,14 @@ class Furniture:
         
         return tiles
     
-    def rotate_clockwise(self):
-        self.direction = (self.direction + 2) % 8
-    
-    def rotate_counter_clockwise(self):
-        self.direction = (self.direction - 2) % 8
+    def change_direction(self):
+        next_direction = self.direction + 2
+
+        if next_direction in self.__furniture_data.possible_directions:
+            self.direction = next_direction
+        else:
+            self.direction = self.__furniture_data.possible_directions[0]
+
     
     def get_rect(self) -> pygame.Rect:
         min_x = float('inf')

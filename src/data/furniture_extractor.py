@@ -79,7 +79,8 @@ class FurnitureExtractor:
                          tile_width=int(dimensions["x"]),
                          tile_height=int(dimensions["y"]),
                          layers=furniture_layers,
-                         all_assets=asset_dic
+                         all_assets=asset_dic,
+                         possible_directions=self.actual_furniture_directions
         )
     
     def __extract_possible_directions(self, logic_xml) -> List[int]:
