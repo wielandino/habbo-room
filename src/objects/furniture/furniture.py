@@ -119,8 +119,7 @@ class Furniture:
         
         return tiles
     
-    
-    
+      
     def get_rect(self) -> pygame.Rect:
         min_x = float('inf')
         min_y = float('inf')
@@ -128,7 +127,13 @@ class Furniture:
         max_y = float('-inf')
 
         for layer in self.__furniture_data.layers:
-            asset = layer.assets.get(self.direction)
+            asset_list = layer.assets.get(self.direction)
+
+            if not asset_list:
+                continue
+
+            asset = next((a for a in asset_list), None)
+
             if not asset:
                 continue
 
