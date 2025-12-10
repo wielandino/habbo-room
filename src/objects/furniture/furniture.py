@@ -17,11 +17,15 @@ class Furniture:
     room_z: int
     direction: int
     type: str
+    color_id: int = 0
 
     screen_x: int = field(init=False)
     screen_y: int = field(init=False)
 
     animation_state: bool = field(init=False)
+    current_frame: int = 0
+    animation_timer: float = 0.0  # Interner Timer
+    animation_speed: float = 0.15  # Sekunden pro Frame (anpassbar!)
 
     __furniture_data: FurnitureBase = field(init=False, repr=False)
 
@@ -36,22 +40,41 @@ class Furniture:
 
         self.screen_x, self.screen_y = IsoUtils.grid_to_screen(self.room_x, self.room_y)
 
-    def render(self, surface: pygame.Surface):
-        current_animation_frame = 0
+    def update(self, delta_time: float):
+        if not self.animation_state:
+            self.current_frame = 0
+            return
         
+        
+        self.animation_timer += delta_time
+        
+        if self.animation_timer >= self.animation_speed:
+            self.animation_timer = 0
+            
+            self.current_frame += 1
+            if self.current_frame > 4:
+                self.current_frame = 1
+
+    def render(self, surface: pygame.Surface):
         for layer in self.__furniture_data.layers:
             asset_list = layer.assets.get(self.direction)
             
             if not asset_list:
                 continue
-            
-            asset = next((a for a in asset_list if a.frame == current_animation_frame), None)
-            
+
+            asset = next((a for a in asset_list if a.frame == self.current_frame), None)    
+
+            if not asset and self.animation_state and self.current_frame > 0:
+                asset = next((a for a in asset_list if a.frame == 1), None)
+
             if not asset:
                 asset = next((a for a in asset_list if a.frame == 0), None)
+
+            if not asset and len(asset_list) > 0:
+                asset = asset_list[0]
             
             if not asset:
-                asset = asset_list[0]
+                continue
             
             sprite = asset.get_sprite(self.__furniture_data.all_assets)
             
@@ -59,10 +82,40 @@ class Furniture:
                 render_x, render_y = self.__calculate_render_position(
                     self.screen_x, self.screen_y, asset, sprite)
                 
-                surface.blit(sprite, (render_x, render_y))
+                sprite_to_draw = sprite.copy()
+
+                if layer.alpha is not None:
+                    sprite_to_draw.set_alpha(layer.alpha)
+
+                if self.color_id in self.__furniture_data.colors:
+                    if layer.layer_id in self.__furniture_data.colors[self.color_id]:
+                        hex_color = self.__furniture_data.colors[self.color_id][layer.layer_id]
+
+                        r = int(hex_color[0:2], 16)
+                        g = int(hex_color[2:4], 16)
+                        b = int(hex_color[4:6], 16)
+                        
+                        sprite_to_draw.fill((r, g, b), special_flags=pygame.BLEND_MULT)
+
+                if layer.ink == "ADD":
+                    surface.blit(sprite_to_draw, (render_x, render_y), 
+                            special_flags=pygame.BLEND_ADD)
+                elif layer.ink == "MULTIPLY":
+                    surface.blit(sprite_to_draw, (render_x, render_y), 
+                            special_flags=pygame.BLEND_MULT)
+                else:
+                    surface.blit(sprite_to_draw, (render_x, render_y))
+
+            
     
     def set_animation_state(self):
-        self.animation_state = not(self.animation_state)
+        self.animation_state = not self.animation_state
+        
+        if self.animation_state:
+            self.current_frame = 1
+            self.animation_timer = 0.0
+        else:
+            self.current_frame = 0
 
     def change_direction(self):
         dirs = self.__furniture_data.possible_directions
@@ -81,10 +134,8 @@ class Furniture:
                                    asset: FurnitureAsset, 
                                    sprite: pygame.Surface) -> tuple[int, int]:
 
-        is_vertical = self.direction in [0, 4]
-        needs_correction = asset.flip_h and is_vertical
-        
-        if not needs_correction:
+         
+        if not asset.flip_h:
             return (screen_x - asset.offset_x, screen_y - asset.offset_y)
         
         sprite_width = sprite.get_width()

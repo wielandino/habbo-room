@@ -11,3 +11,4 @@ class FurnitureBase:
     layers: list[FurnitureLayer]
     all_assets: dict[str, FurnitureAsset]
     possible_directions: list[int] 
+    colors: dict[int, dict[int, str]] = field(default_factory=dict)

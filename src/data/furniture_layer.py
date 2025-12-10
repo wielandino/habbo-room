@@ -9,9 +9,10 @@ class FurnitureLayer:
     z_index: int
     assets: dict[int, list[FurnitureAsset]] = field(default_factory=dict) # int -> direction
 
-    # ink: str = None
-    # alpha: int = None
-    # ignore_mouse: bool = False
+    
+    ink: str = None
+    alpha: int = None
+    ignore_mouse: bool = False
 
     @staticmethod
     def get_layer_id_from_letter(letter: str) -> int:

@@ -11,7 +11,7 @@ class FurnitureAsset:
     source_name: str = ""
     sprite: pygame.Surface = None
     frame: int = 0
-    
+
     def get_sprite(self, all_assets: dict) -> pygame.Surface:
         if self.sprite:
             return self.sprite

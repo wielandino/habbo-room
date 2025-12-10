@@ -76,13 +76,15 @@ class FurnitureExtractor:
         # Extracting
         asset_dic = self.__extract_furniture_assets(asset_xml)
         furniture_layers = self.__build_furniture_layers(visualization_xml, asset_dic)
+        colors = self.__extract_colors(visualization_xml)
 
         return FurnitureBase(name=self.furniture_type,
                          tile_width=int(dimensions["x"]),
                          tile_height=int(dimensions["y"]),
                          layers=furniture_layers,
                          all_assets=asset_dic,
-                         possible_directions=self.actual_furniture_directions
+                         possible_directions=self.actual_furniture_directions,
+                         colors=colors
         )
     
     def __extract_possible_directions(self, logic_xml) -> List[int]:
@@ -124,7 +126,7 @@ class FurnitureExtractor:
         if not viz_64:
             return []
         
-        layer_data = self.__extract_layer_data(viz_64)
+        layer_data, layer_effects = self.__extract_layer_data(viz_64)
         layer_data = self.__extract_directions_data(viz_64, layer_data)
         layer_data = self.__extract_layer_z_index(viz_64, layer_data)
         
@@ -138,30 +140,60 @@ class FurnitureExtractor:
             
             for direction in directions_dict.keys():
                 layer_assets[direction] = []
+                frame = 0
 
-                for i in range(1): # collect animation frame assets
-                    asset_name = f"{self.furniture_type}_64_{layer_letter}_{direction}_{i}"
+                while True:
+                    asset_name = f"{self.furniture_type}_64_{layer_letter}_{direction}_{frame}"
                     asset = asset_dict.get(asset_name)
 
                     if asset:
                         layer_assets[direction].append(asset)
-                    
+                        frame += 1
+                    else:
+                        break
+
+            effects = layer_effects.get(layer_id, {})
 
             furniture_layer = FurnitureLayer(
                 layer_id=layer_id,
                 type=self.furniture_type,
                 z_index=z_index,
-                assets=layer_assets
+                assets=layer_assets,
+                ink=effects.get("ink"),  # ← Setze Effekte!
+                alpha=effects.get("alpha"),
+                ignore_mouse=effects.get("ignore_mouse", False)
             )
             
             furniture_layers.append(furniture_layer)
         
-        furniture_layers.sort(key=lambda l: l.z_index)
+        furniture_layers.sort(key=lambda l: (l.z_index, l.layer_id))
         #pprint.pp(furniture_layers)
         return furniture_layers
     
+    def __extract_colors(self, viz) -> dict:
+        colors = {}
+
+        viz_64 = viz.find("visualization", {"size": "64"})
+        
+        if not viz_64:
+            return []
+        
+        colors_tag = viz_64.find("colors")
+        if colors_tag:
+            for color_tag in colors_tag.find_all("color"):
+                color_id = int(color_tag.get("id"))
+                colors[color_id] = {}
+                
+                for color_layer_tag in color_tag.find_all("colorLayer"):
+                    layer_id = int(color_layer_tag.get("id"))
+                    hex_color = color_layer_tag.get("color")
+                    colors[color_id][layer_id] = hex_color
+        
+        return colors
+
     def __extract_layer_data(self, viz_64) -> dict:
         layer_data = {}
+        layer_effects = {} 
         z_index = 0
 
         layers_tag = viz_64.find("layers")
@@ -172,12 +204,22 @@ class FurnitureExtractor:
                 if(layer_tag.get("z") is not None):
                     z_index = int(layer_tag.get("z"))
                 
+                ink = layer_tag.get("ink")  # "ADD" oder None
+                alpha = int(layer_tag.get("alpha")) if layer_tag.get("alpha") else None
+                ignore_mouse = layer_tag.get("ignoreMouse") == "1"
+
+                layer_effects[layer_id] = {
+                    "ink": ink,
+                    "alpha": alpha,
+                    "ignore_mouse": ignore_mouse
+                }
+
                 for direction in self.actual_furniture_directions:
                     if layer_id not in layer_data:
                         layer_data[layer_id] = {}
                     layer_data[layer_id][direction] = z_index
 
-        return layer_data
+        return layer_data, layer_effects
 
     def __extract_directions_data(self, viz_64, layer_data) -> dict:
         directions_tag = viz_64.find("directions")

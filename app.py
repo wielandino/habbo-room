@@ -58,20 +58,21 @@ class App:
                 type="club_sofa"
             ),
 
-            Furniture(
-                room_x=4,
-                room_y=3,
-                room_z=0,
-                direction=2,
-                type="nft_md_limukaappi"
-            ),
+            # Furniture(
+            #     room_x=4,
+            #     room_y=3,
+            #     room_z=0,
+            #     direction=2,
+            #     type="nft_md_limukaappi"
+            # ),
 
             Furniture(
                 room_x=3,
                 room_y=4,
                 room_z=0,
-                direction=4,
-                type="rare_dragonlamp"
+                direction=2,
+                type="rare_dragonlamp",
+                color_id=11
             )
         ]
     
@@ -92,6 +93,9 @@ class App:
                     if self.selector.handle_click(event.pos):
                         self.furniture_ui.update(self.selector.selected)
         
+        for furniture in self.furnitures:
+            furniture.update(time_delta)
+
         self.ui_manager.update(time_delta)
     
     def __is_click_on_ui(self, pos: tuple) -> bool:
