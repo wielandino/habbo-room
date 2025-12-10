@@ -44,9 +44,6 @@ class Furniture:
             
             if not sprite:
                 continue
-            
-            if self.type == "nft_md_limukaapp":
-                print("Suc")
 
             render_x, render_y = self.__calculate_render_position(
                 self.screen_x, self.screen_y, asset, sprite
