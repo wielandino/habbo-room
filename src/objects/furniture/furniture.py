@@ -41,7 +41,7 @@ class Furniture:
                 continue
             
             sprite = asset.get_sprite(self.__furniture_data.all_assets)
-            
+
             if not sprite:
                 continue
 

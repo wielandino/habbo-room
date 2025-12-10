@@ -152,7 +152,7 @@ class FurnitureExtractor:
                         layer_data[layer_id] = {}
                     layer_data[layer_id][direction_id] = z_index
         
-        standard_z_index = 1000 
+        standard_z_index = 0 
         
         
 
