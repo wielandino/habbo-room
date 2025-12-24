@@ -52,19 +52,19 @@ class App:
         self.furnitures = [
             Furniture(
                 room_x=2,
-                room_y=3,
+                room_y=2,
                 room_z=0,
                 direction=2,
                 type="club_sofa"
             ),
 
-            # Furniture(
-            #     room_x=4,
-            #     room_y=3,
-            #     room_z=0,
-            #     direction=2,
-            #     type="nft_md_limukaappi"
-            # ),
+            Furniture(
+                room_x=4,
+                room_y=3,
+                room_z=0,
+                direction=2,
+                type="nft_md_limukaappi"
+            ),
 
             Furniture(
                 room_x=3,
@@ -74,6 +74,7 @@ class App:
                 type="rare_dragonlamp",
                 color_id=11
             )
+            
         ]
     
     def handle_events(self):

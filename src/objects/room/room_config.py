@@ -1,6 +1,6 @@
 class RoomConfig:
-    TILE_WIDTH = 128
-    TILE_HEIGHT = 64
+    TILE_WIDTH = 100
+    TILE_HEIGHT = 50
     OFFSET_X = 400
     OFFSET_Y = 100
     
